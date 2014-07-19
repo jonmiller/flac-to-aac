@@ -1,0 +1,54 @@
+<project name="FlacToAcc" default="dist_all" basedir=".">
+	
+  	<property name="src" location="src"/>
+  	<property name="bin" location="bin"/>
+	<property name="dist" location="dist"/>
+	<property name="logs" location="logs"/>
+
+	<target name="clean">
+	    <delete dir="${bin}"/>
+		<delete dir="${dist}"/>
+		<delete dir="${logs}"/>
+	</target>
+	
+	<target name="init" depends="clean">
+		<mkdir dir="${bin}"/>
+		<mkdir dir="${dist}"/>
+		<mkdir dir="${logs}"/>
+	</target>  
+
+  	<target name="compile" depends="init">
+    	<javac srcdir="${src}" destdir="${bin}"/>
+  	</target>
+	
+	<target name="dist" depends="compile">
+		<jar destfile="${dist}/FlacToAac.jar" basedir="${bin}" excludes="FlacToAacAlbum.java">
+		   	<manifest>
+		    	<attribute name="Main-Class" value="com.tetyl.flactoaac.drivers.FlacToAac"/>
+		    </manifest>
+		</jar>
+	</target>
+	
+	<target name="dist_album" depends="compile">
+		<jar destfile="${dist}/FlacToAacAlbum.jar" basedir="${bin}" excludes="FlacToAac.java">
+		   	<manifest>
+		    	<attribute name="Main-Class" value="com.tetyl.flactoaac.drivers.FlacToAacAlbum"/>
+		    </manifest>
+		</jar>
+	</target>
+	
+	<target name="dist_all" depends="dist, dist_album"/>
+
+  	<target name="run" depends="dist">
+        <java jar="${dist}/FlacToAac.jar" fork="true" maxmemory="1024m">	
+          	<jvmarg value="-Djava.util.logging.config.file=logging.properties"/>
+        </java>
+  	</target>
+	
+  	<target name="run_album" depends="dist_album">
+        <java jar="${dist}/FlacToAacAlbum.jar" fork="true" maxmemory="1024m">	
+          	<jvmarg value="-Djava.util.logging.config.file=logging.properties"/>
+        </java>
+  	</target>
+	
+</project>
